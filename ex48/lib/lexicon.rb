@@ -6,8 +6,8 @@ class Lexicon
       :verb => %w(go stop kill eat),
       :stop => %w(the in of from at it),
       :nouns => %w(door bear princess cabinet),
-      :number => ["/\d+/"]
     }
+
 
     @transposed_words = nil
 
@@ -28,8 +28,14 @@ class Lexicon
   end
 
   def scan(words)
-    words.split().
-      select{|w| @transposed_words.key?(w) || w =~ @words[:numbers]}.
-      map{|w| Pair.new(@transposed_words[w],w)}
+    result = []
+    words.split().each do |w|
+      if  @transposed_words.key?(w)
+        result.push(Pair.new(@transposed_words[w],w))
+      elsif w =~ /\d+/
+        result.push(Pair.new(:number,w.to_i)) # I don't like this it splits he logik between @words and numbers
+      end
+    end
+    return result
   end
 end
